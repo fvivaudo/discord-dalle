@@ -3,7 +3,7 @@ import 'reflect-metadata'
 
 import process from 'node:process'
 
-import { Options } from '@mikro-orm/core'
+import {Options, Platform, TextType, Type} from '@mikro-orm/core'
 
 import * as entities from '@/entities'
 import { env } from '@/env'
