@@ -13,6 +13,7 @@ export const GuildOnly: GuardFunction<
 > = async (arg, client, next) => {
 	const isInGuild = arg instanceof CommandInteraction ? arg.inGuild() : arg.message.guild
 
+	console.log("I exist!")
 	if (isInGuild)
 		return next()
 	else

@@ -1,4 +1,7 @@
 // @ts-nocheck
+import 'reflect-metadata'
+
+import process from 'node:process'
 
 import { Options } from '@mikro-orm/core'
 
@@ -14,7 +17,7 @@ export default async () => {
 	await pluginsManager.loadPlugins()
 
 	return {
-		...mikroORMConfig[env.NODE_ENV || 'development'] as Options<DatabaseDriver>,
+		...mikroORMConfig[process.env.NODE_ENV || 'development'] as Options<DatabaseDriver>,
 		entities: [...Object.values(entities), ...pluginsManager.getEntities()],
 	}
 }

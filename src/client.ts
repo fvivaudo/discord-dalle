@@ -1,4 +1,4 @@
-import { GatewayIntentBits, Partials } from 'discord.js'
+import { GatewayIntentBits, IntentsBitField,  Partials } from 'discord.js'
 import { ClientOptions } from 'discordx'
 
 import { generalConfig, logsConfig } from '@/configs'
@@ -13,14 +13,14 @@ export function clientConfig(): ClientOptions {
 
 		// discord intents
 		intents: [
-			GatewayIntentBits.Guilds,
-			GatewayIntentBits.GuildMembers,
-			GatewayIntentBits.GuildMessages,
-			GatewayIntentBits.GuildMessageReactions,
-			GatewayIntentBits.GuildVoiceStates,
-			GatewayIntentBits.GuildPresences,
-			GatewayIntentBits.DirectMessages,
-			GatewayIntentBits.MessageContent,
+			IntentsBitField.Flags.Guilds,
+			IntentsBitField.Flags.GuildMembers,
+			IntentsBitField.Flags.GuildMessages,
+			IntentsBitField.Flags.GuildMessageReactions,
+			IntentsBitField.Flags.GuildVoiceStates,
+			IntentsBitField.Flags.GuildPresences,
+			IntentsBitField.Flags.DirectMessages,
+			IntentsBitField.Flags.MessageContent,
 		],
 
 		partials: [
