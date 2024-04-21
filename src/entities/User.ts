@@ -2,7 +2,7 @@ import {Collection, Entity, EntityRepositoryType, OneToMany, PrimaryKey, Propert
 import { EntityRepository } from '@mikro-orm/sqlite'
 
 import { CustomBaseEntity } from './BaseEntity'
-import {Generation} from "./Generation";
+import { Generation } from "./Generation";
 
 // ===========================================
 // ================= Entity ==================
