@@ -185,8 +185,6 @@ export class Dalle {
      * @param cookieValue cookie of the account used for generation
      */
     async createPicture(prompt: string, cookieValue: string) {
-
-
         // Check if cookie is valid first?
         const apiHost = 'https://www.bing.com/images/create'
         const init_referrer = 'https://www.bing.com/images/create?FORM=GENEXP'
@@ -263,8 +261,8 @@ export class Dalle {
 
         let totalCookies = 0
         res.forEach((r, index) => {
-            totalCookies += r.status === 'fulfilled' ? r.value : 0
-            cookies[index].tokens = r.status === 'fulfilled' ? r.value : 0
+            totalCookies += r.status === 'fulfilled' && r.value >= 0 ? r.value : 0
+            cookies[index].tokens = r.status === 'fulfilled'  && r.value >= 0  ? r.value : 0
         })
         // update all cookies
         await cookieRepo.flush();
