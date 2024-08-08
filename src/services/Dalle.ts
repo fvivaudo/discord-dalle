@@ -239,6 +239,10 @@ export class Dalle {
         // const splitFirstMatch = theFirstMatch[0].split(`EventID:"`)
         // const extractedEventId = splitFirstMatch[1].split(`"`)[0]
         const matches = responseHtml.match(regex)
+
+        if (!matches || matches?.length < 2)
+            return {completed: false, urls: [], cookie: cookieValue, error: 'Cannot find event Id'}
+        
         const eventId = matches![1]
 
         // Run FetchPoll in a loop until we get a result or until timeout
