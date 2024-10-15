@@ -348,8 +348,7 @@ export class Dalle {
 
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)
-        if (!matches)
-            return (-1)
+
         return matches ? parseInt(matches[1]) : 0
     }
 
