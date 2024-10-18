@@ -38,6 +38,10 @@ export default class Create {
         client: Client,
         { localize }: InteractionData
     ) {
+        const d = new Date(Date.now())
+        const dateString = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+            d.getFullYear() + "_" + ("0" + d.getHours()).slice(-2) + "-" + ("0" + d.getMinutes()).slice(-2);
+
         const msg = (await interaction.followUp({ content: 'Treating...', fetchReply: true })) as Message
 
         const result = await this.dalle.createManyPictures(prompt, n, interaction.user.id)
@@ -50,16 +54,32 @@ export default class Create {
         else
         {
             let slicedUrls = result.urls.slice(0,4)
+
             let response =
                 '**Success!** ' + result.urls.length + '/' + n * 4 + ' expected pictures' + '\n'
                 + prompt + '\n'
-                + slicedUrls.map((pic) => pic + '\n').join('')
-            await msg.edit(response)
+                // + slicedUrls.map((pic) => pic + '\n').join('')
+
+            await msg.edit({
+                content: response,
+                files: slicedUrls.map((pic, index ) => ({
+                    attachment: pic,
+                    name: 'gen_' + dateString + '_'+ index + '.jpg'
+                }))
+            })
             //Send urls bit by bit so that they all get previewed
             for (let i = 4; i < result.urls.length; i += 4)
             {
                 slicedUrls = result.urls.slice(i,4+i)
-                await msg.reply(slicedUrls.map((pic) => pic + '\n').join(''))
+                // await msg.reply(slicedUrls.map((pic) => pic + '\n').join(''))
+
+                const arrayFiles = slicedUrls.map((pic, index ) => ({
+                    attachment: pic,
+                    name: 'gen_' + dateString + '_'+ (i+index) + '.jpg'
+                }))
+                await msg.reply({
+                    files: arrayFiles,
+                });
             }
 
             await this.dalle.createGeneration(prompt, result.urls)
