@@ -6,6 +6,17 @@ import {Discord, Injectable, Slash} from '@/decorators'
 import {Dalle} from "@/services";
 import {Generation} from "@/entities";
 
+function randomString(length:number) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter += 1;
+    }
+    return result;
+}
 @Discord()
 @Injectable()
 @Category('Dalle')
@@ -44,7 +55,9 @@ export default class Create {
 
         const msg = (await interaction.followUp({ content: 'Treating...', fetchReply: true })) as Message
 
-        const result = await this.dalle.createManyPictures(prompt, n, interaction.user.id)
+        const backFilledPrompt = prompt.length > 470 ? prompt : prompt.concat(" ", randomString(479 - prompt.length))
+
+        const result = await this.dalle.createManyPictures(backFilledPrompt, n, interaction.user.id)
         if (!result.completed || result.urls.length === 0)
         {
             let response = '**Failure!** '+ result.error+ '\n' + prompt + '\n'
