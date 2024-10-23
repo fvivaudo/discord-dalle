@@ -249,7 +249,7 @@ export class Dalle {
         let fetchPoll = () => this.pollForBingPicture(eventId, cookieValue, headers);
         let validate = (result: ResultPoll) => !result.completed;
         let response2: ResultPoll = await poll(fetchPoll, validate, 4000, 5);
-        console.log(response2)
+        console.log(response2.urls)
         return response2
     }
 

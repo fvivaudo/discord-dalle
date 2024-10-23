@@ -55,9 +55,11 @@ export default class Create {
 
         const msg = (await interaction.followUp({ content: 'Treating...', fetchReply: true })) as Message
 
-        const backFilledPrompt = prompt.length > 470 ? prompt : prompt.concat(" ", randomString(479 - prompt.length))
+        // const backFilledPrompt = prompt.length > 470 ? prompt : prompt.concat(" ", randomString(479 - prompt.length))
+        //
+        // console.log(backFilledPrompt)
 
-        const result = await this.dalle.createManyPictures(backFilledPrompt, n, interaction.user.id)
+        const result = await this.dalle.createManyPictures(prompt, n, interaction.user.id)
         if (!result.completed || result.urls.length === 0)
         {
             let response = '**Failure!** '+ result.error+ '\n' + prompt + '\n'
