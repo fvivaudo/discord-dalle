@@ -47,6 +47,24 @@ type RootTranslation = {
 		NO_COMMAND_DESCRIPTION: string
 	}
 	COMMANDS: {
+		DALLE: {
+			/**
+			 * G​e​n​e​r​a​t​e​ ​p​i​c​t​u​r​e​s​ ​w​i​t​h​ ​y​o​u​r​ ​p​r​o​m​p​t​,​ ​r​u​n​ ​n​ ​g​e​n​e​r​a​t​i​o​n​s​ ​(​4​ ​p​i​c​s​)
+			 */
+			DESCRIPTION: string
+		}
+		TOKENS: {
+			/**
+			 * H​o​w​ ​m​a​n​y​ ​g​e​n​e​r​a​t​i​o​n​ ​t​o​k​e​n​s​ ​a​r​e​ ​s​t​i​l​l​ ​a​v​a​i​l​a​b​l​e​ ​f​o​r​ ​t​o​d​a​y
+			 */
+			DESCRIPTION: string
+		}
+		ADD_COOKIE: {
+			/**
+			 * G​i​v​e​ ​a​ ​m​i​c​r​o​s​o​f​t​ ​b​i​n​g​e​ ​c​r​e​a​t​o​r​ ​a​c​c​o​u​n​t​ ​c​o​o​k​i​e​ ​t​o​ ​t​h​e​ ​b​o​t​,​ ​a​l​l​o​w​i​n​g​ ​i​t​ ​t​o​ ​g​e​n​e​r​a​t​e​ ​m​o​r​e​ ​d​a​i​l​y​ ​p​i​c​t​u​r​e​s​!​ ​(​E​x​p​i​r​e​s​ ​a​f​t​e​r​ ​1​4​ ​d​a​y​s​,​ ​s​e​e​ ​#​h​o​w​ ​d​o​e​s​ ​i​t​ ​w​o​r​k​)
+			 */
+			DESCRIPTION: string
+		}
 		INVITE: {
 			/**
 			 * I​n​v​i​t​e​ ​t​h​e​ ​b​o​t​ ​t​o​ ​y​o​u​r​ ​s​e​r​v​e​r​!
@@ -206,6 +224,24 @@ export type TranslationFunctions = {
 		NO_COMMAND_DESCRIPTION: () => LocalizedString
 	}
 	COMMANDS: {
+		DALLE: {
+			/**
+			 * Generate pictures with your prompt, run n generations (4 pics)
+			 */
+			DESCRIPTION: () => LocalizedString
+		}
+		TOKENS: {
+			/**
+			 * How many generation tokens are still available for today
+			 */
+			DESCRIPTION: () => LocalizedString
+		}
+		ADD_COOKIE: {
+			/**
+			 * Give a microsoft binge creator account cookie to the bot, allowing it to generate more daily pictures! (Expires after 14 days, see #how does it work)
+			 */
+			DESCRIPTION: () => LocalizedString
+		}
 		INVITE: {
 			/**
 			 * Invite the bot to your server!
