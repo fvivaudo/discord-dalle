@@ -40,7 +40,9 @@ export default class AddCookie {
             if (response.includes('Success!'))
             {
                 await this.dalle.addOneContributedCookie(interaction.user.id)
-                await ( client.channels.cache.get('1230126888685408278') as TextChannel ).send('Comrade ' + '<@' + interaction.member + '>' + ' has toiled for a cookie, and gave it to the commune. Thank you!')
+                await ( client.channels.cache.get('1230126888685408278') as TextChannel ).send('<@' + interaction.user.id + '>' + ' gave the bot a cookie, helping it run! Thank you!')
+                await ( client.channels.cache.get('1272759037343301683') as TextChannel ).send('<@' + interaction.user.id + '>' + ' gave the bot a cookie, helping it run! Thank you!')
+
             }
         // await client.send
         // }
