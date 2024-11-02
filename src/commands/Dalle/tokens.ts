@@ -15,6 +15,7 @@ export default class Tokens {
 
     @Slash({
         name: 'tokens',
+        description: 'How many generation tokens are still available for today',
     })
     async add_cookie(
         interaction: CommandInteraction,

@@ -15,6 +15,7 @@ export default class AddCookie {
 
     @Slash({
         name: 'add_cookie',
+        description: 'Give a microsoft bing creator account _U cookie to the bot'
     })
     async add_cookie(
         @SlashOption({

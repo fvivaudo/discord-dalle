@@ -22,7 +22,7 @@ const ru = {
 			DESCRIPTION: 'How many generation tokens are still available for today',
 		},
 		ADD_COOKIE: {
-			DESCRIPTION: 'Give a microsoft binge creator account cookie to the bot, allowing it to generate more daily pictures! (Expires after 14 days, see #how does it work)',
+			DESCRIPTION: 'Give a microsoft bing creator account cookie to the bot, allowing it to generate more daily pictures! (Expires after 14 days, see #how does it work)',
 		},
 		INVITE: {
 			DESCRIPTION: 'Пригласить бота на свой сервер!',

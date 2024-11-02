@@ -27,6 +27,7 @@ export default class Create {
 
     @Slash({
         name: 'dalle',
+        description: 'Generate pictures with your prompt, run n generations (4 pics)'
     })
     async create(
         @SlashOption({
