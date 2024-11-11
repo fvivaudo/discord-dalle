@@ -61,7 +61,7 @@ type RootTranslation = {
 		}
 		ADD_COOKIE: {
 			/**
-			 * G​i​v​e​ ​a​ ​m​i​c​r​o​s​o​f​t​ ​b​i​n​g​e​ ​c​r​e​a​t​o​r​ ​a​c​c​o​u​n​t​ ​c​o​o​k​i​e​ ​t​o​ ​t​h​e​ ​b​o​t​,​ ​a​l​l​o​w​i​n​g​ ​i​t​ ​t​o​ ​g​e​n​e​r​a​t​e​ ​m​o​r​e​ ​d​a​i​l​y​ ​p​i​c​t​u​r​e​s​!​ ​(​E​x​p​i​r​e​s​ ​a​f​t​e​r​ ​1​4​ ​d​a​y​s​,​ ​s​e​e​ ​#​h​o​w​ ​d​o​e​s​ ​i​t​ ​w​o​r​k​)
+			 * G​i​v​e​ ​a​ ​b​i​n​g​ ​c​r​e​a​t​o​r​ ​a​c​c​o​u​n​t​ ​c​o​o​k​i​e​ ​t​o​ ​t​h​e​ ​b​o​t​,​ ​a​l​l​o​w​i​n​g​ ​i​t​ ​t​o​ ​g​e​n​e​r​a​t​e​ ​1​5​ ​m​o​r​e​ ​d​a​i​l​y​ ​p​i​c​t​u​r​e​s​!
 			 */
 			DESCRIPTION: string
 		}
@@ -238,7 +238,7 @@ export type TranslationFunctions = {
 		}
 		ADD_COOKIE: {
 			/**
-			 * Give a microsoft bing creator account cookie to the bot, allowing it to generate more daily pictures! (Expires after 14 days, see #how does it work)
+			 * Give a bing creator account cookie to the bot, allowing it to generate 15 more daily pictures!
 			 */
 			DESCRIPTION: () => LocalizedString
 		}
