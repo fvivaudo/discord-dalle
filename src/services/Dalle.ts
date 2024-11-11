@@ -284,20 +284,20 @@ export class Dalle {
         const response = await fetch(`https://www.bing.com/images/create`, {
             method: 'GET',
             headers: {
-                Accept:
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Accept-Language': 'en-US,en;q=0.5',
-                Connection: 'keep-alive',
-                DNT: '1',
-                'Sec-Fetch-Dest': 'document',
-                'Sec-Fetch-Mode': 'navigate',
-                'Sec-Fetch-Site': 'same-origin',
-                'Sec-Fetch-User': '?1',
-                TE: 'trailers',
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
+                // Accept:
+                //     'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                // 'Accept-Encoding': 'gzip, deflate, br',
+                // 'Accept-Language': 'en-US,en;q=0.5',
+                // Connection: 'keep-alive',
+                // DNT: '1',
+                // 'Sec-Fetch-Dest': 'document',
+                // 'Sec-Fetch-Mode': 'navigate',
+                // 'Sec-Fetch-Site': 'same-origin',
+                // 'Sec-Fetch-User': '?1',
+                // TE: 'trailers',
+                // 'Upgrade-Insecure-Requests': '1',
+                // 'User-Agent':
+                //     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
                 cookie: `_U=${cookie}`,
             },
         })
@@ -326,26 +326,13 @@ export class Dalle {
         const response = await fetch(`https://www.bing.com/images/create`, {
             method: 'GET',
             headers: {
-                Accept:
-                    'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Accept-Language': 'en-US,en;q=0.5',
-                Connection: 'keep-alive',
-                DNT: '1',
                 Referer: initReferrer,
-                'Sec-Fetch-Dest': 'document',
-                'Sec-Fetch-Mode': 'navigate',
-                'Sec-Fetch-Site': 'same-origin',
-                'Sec-Fetch-User': '?1',
-                TE: 'trailers',
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
                 cookie: `_U=${cookie}`,
             },
         })
         const responseText = await response.text()
 
+        console.log(responseText)
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)
 
