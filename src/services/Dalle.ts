@@ -323,9 +323,25 @@ export class Dalle {
     async checkCookie(cookie: string) {
         const initReferrer = 'https://www.bing.com/images/create'
 
+
+
+
+
         const response = await fetch(`https://www.bing.com/images/create`, {
             method: 'GET',
             headers: {
+                'Host': 'www.bing.com',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
+                'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
+                'Accept-Encoding': 'gzip, deflate, br, zstd',
+                'Connection': 'keep-alive',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'no-cors',
+                'Sec-Fetch-Site': 'same-origin',
+                TE: 'trailers',
+                Priority: 'u=4',
+                Pragma: 'no-cache',
+                'Cache-Control': 'no-cache',
                 Referer: initReferrer,
                 cookie: `_U=${cookie}`,
             },
