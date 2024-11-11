@@ -330,9 +330,11 @@ export class Dalle {
                 cookie: `_U=${cookie}`,
             },
         })
+
+        console.log(response)
+
         const responseText = await response.text()
 
-        console.log(responseText)
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)
 
