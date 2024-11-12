@@ -347,7 +347,7 @@ export class Dalle {
             },
         })
 
-        console.log(response)
+        // console.log(response)
 
         const responseText = await response.text()
 
