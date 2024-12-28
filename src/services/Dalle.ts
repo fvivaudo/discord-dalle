@@ -346,7 +346,7 @@ export class Dalle {
                 'Cache-Control': 'no-cache',
                 Referer: initReferrer,
                 cookie: `_U=${cookie}`,
-                'X-Forwarded-For': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
+                'X-Custom-IP-Authorization': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
 
             },
         })
