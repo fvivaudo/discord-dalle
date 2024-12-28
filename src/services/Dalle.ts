@@ -365,7 +365,7 @@ export class Dalle {
     async validateAndRegisterCookie(cookie: string) {
 
         const tokenCount = await this.checkCookie(cookie)
-        if (tokenCount < 0)
+        if (tokenCount <= 0)
             return ('Error! Cookie is invalid or bing is unavailable')
         else {
             const newCookie = new Cookie()
