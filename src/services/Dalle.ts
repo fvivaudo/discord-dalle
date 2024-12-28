@@ -323,8 +323,10 @@ export class Dalle {
     async checkCookie(cookie: string) {
         const initReferrer = 'https://www.bing.com/images/create'
 
-
-
+        const getRandomNum = () => {
+            // Get random ip number
+            return Math.floor(Math.random() * 254) + 1
+        }
 
 
         const response = await fetch(`https://www.bing.com/images/create`, {
@@ -344,6 +346,8 @@ export class Dalle {
                 'Cache-Control': 'no-cache',
                 Referer: initReferrer,
                 cookie: `_U=${cookie}`,
+                'X-Forwarded-For': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
+
             },
         })
 
