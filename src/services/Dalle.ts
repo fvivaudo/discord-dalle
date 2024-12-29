@@ -333,7 +333,7 @@ export class Dalle {
             method: 'GET',
             headers: {
                 'Host': 'www.bing.com',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0',
+                'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
                 'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
                 'Accept-Encoding': 'gzip, deflate, br, zstd',
                 'Connection': 'keep-alive',
@@ -346,19 +346,20 @@ export class Dalle {
                 'Cache-Control': 'no-cache',
                 Referer: initReferrer,
                 cookie: `_U=${cookie}`,
-                'X-Custom-IP-Authorization': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
-
             },
         })
+        // 'X-Forwarded-For': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
 
         // console.log(response)
 
         const responseText = await response.text()
 
+        // console.log(responseText)
+
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)
 
-        return matches ? parseInt(matches[1]) : 0
+        return matches ? parseInt(matches[1]) : -1
     }
 
 
@@ -369,7 +370,7 @@ export class Dalle {
     async validateAndRegisterCookie(cookie: string) {
 
         const tokenCount = await this.checkCookie(cookie)
-        if (tokenCount <= 0)
+        if (tokenCount < 0)
             return ('Error! Cookie is invalid or bing is unavailable')
         else {
             const newCookie = new Cookie()
