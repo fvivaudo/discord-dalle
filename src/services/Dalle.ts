@@ -4,8 +4,7 @@ import {EntityRepository} from "@mikro-orm/core";
 import {Cookie, Generation, User} from "@/entities";
 import {header} from "case";
 import * as cheerio from 'cheerio';
-import {AxiosError} from "axios";
-
+import axios, { AxiosInstance, AxiosError } from "axios";
 const merge = (a: any, b: any, predicate = (a: any, b: any) => a === b) => {
     const c = [...a]; // copy to avoid side effects
     // add all items from B to copy C if they're not already present
@@ -63,7 +62,7 @@ export class Dalle {
 
         const headers = {
             'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0',
             Accept:
                 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -323,38 +322,95 @@ export class Dalle {
     async checkCookie(cookie: string) {
         const initReferrer = 'https://www.bing.com/images/create'
 
+        const session = axios.create({
+            headers: {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                "Referer": initReferrer,
+                "Cookie": cookie,
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Host": "www.bing.com",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0",
+                "Accept-Language": "en-US,en;q=0.5",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Origin": "https://www.bing.com",
+                "DNT": "1",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "TE": "trailers",
+                "Priority": "u=1"
+    }
+
+        });
+
+
+        // headers: {
+        //     accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        //         "accept-encoding": "gzip, deflate, br",
+        //         "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6",
+        //         "cache-control": "max-age=0",
+        //         "content-type": "application/x-www-form-urlencoded",
+        //         "Referrer-Policy": "origin-when-cross-origin",
+        //         referrer: "https://www.bing.com/images/create/",
+        //         origin: "https://www.bing.com",
+        //         "user-agent":
+        //     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54",
+        //         cookie: `_U=${cookie}`,
+        //         "sec-ch-ua": `"Microsoft Edge";v="111", "Not(A:Brand";v="8", "Chromium";v="111"`,
+        //         "sec-ch-ua-mobile": "?0",
+        //         "sec-fetch-dest": "document",
+        //         "sec-fetch-mode": "navigate",
+        //         "sec-fetch-site": "same-origin",
+        //         "sec-fetch-user": "?1",
+        //         "upgrade-insecure-requests": "1",
+        // },
         const getRandomNum = () => {
             // Get random ip number
             return Math.floor(Math.random() * 254) + 1
         }
 
+        const getRandomNumRange = (min:number, max:number) => {
+            // Get random ip number
+            return Math.floor(Math.random() * (max - min)) + min
+        }
 
-        const response = await fetch(`https://www.bing.com/images/create`, {
-            method: 'GET',
-            headers: {
-                'Host': 'www.bing.com',
-                'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
-                'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
-                'Accept-Encoding': 'gzip, deflate, br, zstd',
-                'Connection': 'keep-alive',
-                'Sec-Fetch-Dest': 'empty',
-                'Sec-Fetch-Mode': 'no-cors',
-                'Sec-Fetch-Site': 'same-origin',
-                TE: 'trailers',
-                Priority: 'u=4',
-                Pragma: 'no-cache',
-                'Cache-Control': 'no-cache',
-                Referer: initReferrer,
-                cookie: `_U=${cookie}`,
-            },
-        })
-        // 'X-Forwarded-For': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
 
-        // console.log(response)
 
-        const responseText = await response.text()
+        const response = await session.get(`https://www.bing.com/images/create`)
 
-        // console.log(responseText)
+        // const FORWARDED_IP = `13.${getRandomNumRange(104,107)}.${getRandomNumRange(0,255)}.${getRandomNumRange(0,255)}`
+        // const response = await fetch(`https://www.bing.com/images/create?`, {
+        //     method: 'GET',
+        //     headers: {
+        //         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        //         "Sec-Fetch-Dest": "document",
+        //         "Sec-Fetch-Mode": "navigate",
+        //         "Sec-Fetch-Site": "same-origin",
+        //         "Sec-Fetch-User": "?1",
+        //         "Host": "www.bing.com",
+        //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0",
+        //         "Accept-Language": "en-US,en;q=0.5",
+        //         "Accept-Encoding": "gzip, deflate, br",
+        //         "Origin": "https://www.bing.com",
+        //         "DNT": "1",
+        //         "Content-Length": "15",
+        //         "Content-Type": "application/x-www-form-urlencoded",
+        //         "Connection": "keep-alive",
+        //         "Upgrade-Insecure-Requests": "1",
+        //         "TE": "trailers",
+        //         "Priority": "u=1",
+        //         Referer: initReferrer,
+        //         cookie: `_U=${cookie}`,
+        //     },
+        // })
+
+        console.log("response")
+        console.log(response)
+
+        const responseText = response.data
+
+        console.log("TEXT")
+        console.log(responseText)
 
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)

@@ -13,8 +13,13 @@ export class Cookie extends CustomBaseEntity {
 
     [EntityRepositoryType]?: CookieRepository
 
+    // _U
     @PrimaryKey({ autoincrement: false })
     id!: string
+
+    // SRCHHPGUSR
+    @Property()
+    cookie2: string = ""
 
     @Property()
     tokens: number = 0
