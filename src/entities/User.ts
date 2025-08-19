@@ -1,7 +1,8 @@
-import { Entity, EntityRepositoryType, PrimaryKey, Property } from '@mikro-orm/core'
+import { OneToMany, Collection, Entity, EntityRepositoryType, PrimaryKey, Property } from '@mikro-orm/core'
 import { EntityRepository } from '@mikro-orm/sqlite'
 
 import { CustomBaseEntity } from './BaseEntity'
+import { Generation } from "./Generation";
 
 // ===========================================
 // ================= Entity ==================
@@ -13,11 +14,19 @@ export class User extends CustomBaseEntity {
 	[EntityRepositoryType]?: UserRepository
 
 	@PrimaryKey({ autoincrement: false })
-    id!: string
+	id!: string
 
 	@Property()
-    lastInteract: Date = new Date()
+	lastInteract: Date = new Date()
 
+	@Property()
+	contributedCookies: number = 0
+
+	@Property()
+	usedTokens: number = 0
+
+	@OneToMany({ entity: () => Generation, mappedBy: 'author', orphanRemoval: true })
+	images = new Collection<Generation>(this);
 }
 
 // ===========================================

@@ -2,10 +2,10 @@ import { env } from '@/env'
 
 export const generalConfig: GeneralConfigType = {
 
-	name: 'tscord', // the name of your bot
-	description: '', // the description of your bot
+	name: 'DALLE3', // the name of your bot
+	description: 'Generate plenty of AI pictures', // the description of your bot
 	defaultLocale: 'en', // default language of the bot, must be a valid locale
-	ownerId: env.BOT_OWNER_ID,
+	ownerId: process.env.BOT_OWNER_ID!,
 	timezone: 'Europe/Paris', // default TimeZone to well format and localize dates (logs, stats, etc)
 
 	simpleCommandsPrefix: '!', // default prefix for simple command messages (old way to do commands on discord)
@@ -13,7 +13,7 @@ export const generalConfig: GeneralConfigType = {
 
 	// useful links
 	links: {
-		invite: 'https://www.change_invite_link_here.com',
+		invite: 'https://discord.com/api/oauth2/authorize?client_id=1192421027804872774&permissions=8&scope=bot%20applications.commands',
 		supportServer: 'https://discord.com/your_invitation_link',
 		gitRemoteRepo: 'https://github.com/barthofu/tscord',
 	},
@@ -25,12 +25,8 @@ export const generalConfig: GeneralConfigType = {
 	// define the bot activities (phrases under its name). Types can be: PLAYING, LISTENING, WATCHING, STREAMING
 	activities: [
 		{
-			text: 'discord.js v14 with tscord',
-			type: 'PLAYING',
-		},
-		{
-			text: 'some knowledge',
-			type: 'STREAMING',
+			text: 'YOU',
+			type: 'WATCHING',
 		},
 	],
 

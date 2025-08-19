@@ -26,7 +26,7 @@ export class Database {
 		const pluginsManager = await resolveDependency(PluginsManager)
 
 		// get config
-		const config = mikroORMConfig[env.NODE_ENV || 'development'] as Options<DatabaseDriver>
+		const config = mikroORMConfig[env.NODE_ENV || 'development'] as unknown as Options<DatabaseDriver>
 
 		// defines entities into the config
 		config.entities = [...Object.values(entities), ...pluginsManager.getEntities()]
@@ -188,7 +188,6 @@ export class Database {
 	isSQLiteDatabase(): boolean {
 		const config = mikroORMConfig[env.NODE_ENV]
 
-		// @ts-expect-error
 		return !!config.dbName && !config.port
 	}
 
