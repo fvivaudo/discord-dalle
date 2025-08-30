@@ -7,7 +7,7 @@ import { CustomBaseEntity } from './BaseEntity'
 // ================= Entity ==================
 // ===========================================
 
-@Entity({ customRepository: () => CookieRepository })
+@Entity({ repository: () => CookieRepository })
 @Filter({ name: 'tokensLeft', cond: { tokens: { $gt: 0 } } })
 export class Cookie extends CustomBaseEntity {
 
@@ -16,10 +16,6 @@ export class Cookie extends CustomBaseEntity {
     // _U
     @PrimaryKey({ autoincrement: false })
     id!: string
-
-    // SRCHHPGUSR
-    @Property()
-    cookie2: string = ""
 
     @Property()
     tokens: number = 0

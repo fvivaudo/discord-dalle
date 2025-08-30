@@ -19,12 +19,19 @@ export default class AddCookie {
     })
     async add_cookie(
         @SlashOption({
-            description: "your _U cookie",
+            description: "_U cookie",
             name: "cookie",
             required: true,
             type: ApplicationCommandOptionType.String,
         })
-            cookie: string,
+            _U: string,
+        // @SlashOption({
+        //     description: "SRCHHPGUSR cookie",
+        //     name: "analytics",
+        //     required: false,
+        //     type: ApplicationCommandOptionType.String,
+        // })
+        //     SRCHHPGUSR: string,
         interaction: CommandInteraction,
         client: Client,
         { localize }: InteractionData
@@ -34,7 +41,8 @@ export default class AddCookie {
         // if (cookie.length !== 215)
         //     await msg.edit('Error! Cookie should be 215 characters long')
         // else {
-            const response = await this.dalle.validateAndRegisterCookie(cookie)
+        //     const response = await this.dalle.validateAndRegisterCookie(_U, SRCHHPGUSR ? SRCHHPGUSR : "")
+        const response = await this.dalle.validateAndRegisterCookie(_U)
 
             await msg.edit(response + ' Thanks!')
 

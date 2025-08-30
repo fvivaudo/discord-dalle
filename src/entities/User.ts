@@ -1,4 +1,4 @@
-import {Collection, Entity, EntityRepositoryType, OneToMany, PrimaryKey, Property} from '@mikro-orm/core'
+import { OneToMany, Collection, Entity, EntityRepositoryType, PrimaryKey, Property } from '@mikro-orm/core'
 import { EntityRepository } from '@mikro-orm/sqlite'
 
 import { CustomBaseEntity } from './BaseEntity'
@@ -8,16 +8,16 @@ import { Generation } from "./Generation";
 // ================= Entity ==================
 // ===========================================
 
-@Entity({ customRepository: () => UserRepository })
+@Entity({ repository: () => UserRepository })
 export class User extends CustomBaseEntity {
 
 	[EntityRepositoryType]?: UserRepository
 
 	@PrimaryKey({ autoincrement: false })
-    id!: string
+	id!: string
 
 	@Property()
-    lastInteract: Date = new Date()
+	lastInteract: Date = new Date()
 
 	@Property()
 	contributedCookies: number = 0
@@ -40,7 +40,7 @@ export class UserRepository extends EntityRepository<User> {
 
 		if (user) {
 			user.lastInteract = new Date()
-			await this.flush()
+			await this.em.flush()
 		}
 	}
 

@@ -4,7 +4,8 @@ import {EntityRepository} from "@mikro-orm/core";
 import {Cookie, Generation, User} from "@/entities";
 import {header} from "case";
 import * as cheerio from 'cheerio';
-import axios, { AxiosInstance, AxiosError } from "axios";
+import {AxiosError} from "axios";
+
 const merge = (a: any, b: any, predicate = (a: any, b: any) => a === b) => {
     const c = [...a]; // copy to avoid side effects
     // add all items from B to copy C if they're not already present
@@ -54,6 +55,10 @@ export class Dalle {
 
     }
 
+    /**
+     * Get headers
+     * @param cookie  _U cookie
+     */
     getHeaders(cookie: string) {
         const getRandomNum = () => {
             // Get random ip number
@@ -62,7 +67,7 @@ export class Dalle {
 
         const headers = {
             'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
             Accept:
                 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
@@ -73,7 +78,7 @@ export class Dalle {
             'Sec-Fetch-Mode': 'navigate',
             'Sec-Fetch-Site': 'same-origin',
             'Sec-Fetch-User': '?1',
-            Cookie: `_U=${cookie};`,
+            cookie: `_U=${cookie}`,
             'X-Forwarded-For': `20.${getRandomNum()}.${getRandomNum()}.${getRandomNum()}`,
         }
 
@@ -123,7 +128,7 @@ export class Dalle {
             const cookieRepo = this.db.get(Cookie)
             const ref = await cookieRepo.findOne({id: cookie});
             ref!.tokens = ref!.tokens - 1;
-            await cookieRepo.persistAndFlush(ref!)
+            await cookieRepo.getEntityManager().persistAndFlush(ref!)
         }
         return {completed: resultProcured, urls: pictureUrls, cookie: cookie, error: 'timeout'}
     }
@@ -181,7 +186,7 @@ export class Dalle {
     /**
      * Create one picture from a prompt and bing cookie.
      * @param prompt creation prompt
-     * @param cookieValue cookie of the account used for generation
+     * @param cookieValue _U cookie of the account used for generation
      */
     async createPicture(prompt: string, cookieValue: string) {
         // Check if cookie is valid first?
@@ -196,7 +201,7 @@ export class Dalle {
         const headers = this.getHeaders(cookieValue)
 
         const response = await fetch(
-            `${apiHost}?q=${prompt}&rt=${rt}&FORM=GENCRE`,
+            `${apiHost}?q=${prompt}&rt=${rt}&FORM=GENCRE&mdl=0&girftp=1`,
             {
                 method: 'POST',
                 headers: headers
@@ -204,7 +209,9 @@ export class Dalle {
         )
 
 
-        // console.log(`status is ${response.status}`)
+        // https://www.bing.com/images/create?q=graphene%2C%20oil%20on%20canvas%2C%20Karol%20bak%2C%20full%20body%20shot%2C%20carefree%20and%20happy%20dark%20elf%20cyberpunk%20%20female%20character%20with%20striking%20pink%20%20eyes%2C%20walking%20down%20a%20cyberpunk%20alley%2C%20she%20has%20dark-grey%20skin%20and%20black%20hair%2C%20she%20is%20looking%20smug%20%2C%20she%20has%20red%20ribbon%20tied%20in%20her%20hair%2C%20%20and%20is%20wearing%20red%20long%20dress%20&rt=4&FORM=GENCRE&id=1-6824fc88ff8d4413b296afec67e65b4c
+
+        console.log(`status is ${response.status}`)
         const isSlowMode = false
         const credits = 15
         const responseHtml = await response.text()
@@ -213,17 +220,26 @@ export class Dalle {
             const $ = cheerio.load(responseHtml)
             const errorAmount = $('.gil_err_img.rms_img').length
             if (!isSlowMode && credits > 0 && $('#gilen_son').hasClass('show_n')) {
+                console.log(`res1`)
                 throw 'Dalle-3 is currently unavailable due to high demand'
             } else if (
                 $('#gilen_son').hasClass('show_n') ||
                 (errorAmount === 2 && credits > 0 && isSlowMode)
             ) {
+                console.log(`res2`)
                 throw 'Slow mode is currently unavailable due to high demand'
             } else if (errorAmount === 2) {
+                console.log(`Invalid cookie`)
+                // TODO find out why some cookies are invalid
+                const cookieRepo = this.db.get(Cookie)
+                const ref = await cookieRepo.findOne({id: cookieValue});
+                ref!.tokens = 0;
+                await cookieRepo.getEntityManager().persistAndFlush(ref!)
                 //We don't want to throw, since this error won't affect other requests in promise.all
                 return {completed: false, urls: [], cookie: cookieValue, error: 'Invalid cookie'}
                 // throw 'Invalid cookie'
             } else if (errorAmount === 4) {
+                console.log(`res4`)
                 throw 'Prompt has been blocked'
             }
             // else {
@@ -231,6 +247,7 @@ export class Dalle {
             //     throw responseHtml
             // }
         }
+        console.log('test1')
 
         // fetch true event Id
         const regex = /results\/1-([a-z0-9]*)\?q/
@@ -239,10 +256,16 @@ export class Dalle {
         // const extractedEventId = splitFirstMatch[1].split(`"`)[0]
         const matches = responseHtml.match(regex)
 
+        console.log('test2')
+
         if (!matches || matches?.length < 2)
+        {
+            console.log('Cannot find event Id')
             return {completed: false, urls: [], cookie: cookieValue, error: 'Cannot find event Id'}
-        
+        }
+
         const eventId = matches![1]
+        console.log(eventId)
 
         // Run FetchPoll in a loop until we get a result or until timeout
         let fetchPoll = () => this.pollForBingPicture(eventId, cookieValue, headers);
@@ -268,7 +291,7 @@ export class Dalle {
             cookies[index].tokens = r.status === 'fulfilled'  && r.value >= 0  ? r.value : 0
         })
         // update all cookies
-        await cookieRepo.flush();
+        await cookieRepo.getEntityManager().flush();
 
 
         return totalCookies
@@ -310,60 +333,18 @@ export class Dalle {
         const cookieRepo = this.db.get(Cookie)
         const ref = await cookieRepo.findOne({id: cookie});
         ref!.tokens = matches ? parseInt(matches[1]) : 0;
-        await cookieRepo.persistAndFlush(ref!)
+        await cookieRepo.getEntityManager().persistAndFlush(ref!)
 
         return matches ? parseInt(matches[1]) : 0
     }
 
     /**
      * Check if cookie is valid.
-     * @param cookie _U cookie
+     * @param cookie  _U cookie
      */
     async checkCookie(cookie: string) {
-        const initReferrer = 'https://www.bing.com/images/create'
-
-        const session = axios.create({
-            headers: {
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                "Referer": initReferrer,
-                "Cookie": cookie,
-                "Sec-Fetch-Dest": "document",
-                "Sec-Fetch-Mode": "navigate",
-                "Host": "www.bing.com",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Origin": "https://www.bing.com",
-                "DNT": "1",
-                "Connection": "keep-alive",
-                "Upgrade-Insecure-Requests": "1",
-                "TE": "trailers",
-                "Priority": "u=1"
-    }
-
-        });
-
-
-        // headers: {
-        //     accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        //         "accept-encoding": "gzip, deflate, br",
-        //         "accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh-TW;q=0.7,zh;q=0.6",
-        //         "cache-control": "max-age=0",
-        //         "content-type": "application/x-www-form-urlencoded",
-        //         "Referrer-Policy": "origin-when-cross-origin",
-        //         referrer: "https://www.bing.com/images/create/",
-        //         origin: "https://www.bing.com",
-        //         "user-agent":
-        //     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36 Edg/111.0.1661.54",
-        //         cookie: `_U=${cookie}`,
-        //         "sec-ch-ua": `"Microsoft Edge";v="111", "Not(A:Brand";v="8", "Chromium";v="111"`,
-        //         "sec-ch-ua-mobile": "?0",
-        //         "sec-fetch-dest": "document",
-        //         "sec-fetch-mode": "navigate",
-        //         "sec-fetch-site": "same-origin",
-        //         "sec-fetch-user": "?1",
-        //         "upgrade-insecure-requests": "1",
-        // },
+        const initReferrer = 'https://www.bing.com/images/create/'
+        // await self.session.get(f"{BING_URL}{redirect_url}")
         const getRandomNum = () => {
             // Get random ip number
             return Math.floor(Math.random() * 254) + 1
@@ -375,45 +356,40 @@ export class Dalle {
         }
 
 
+        const FORWARDED_IP = `13.${getRandomNumRange(104,107)}.${getRandomNumRange(0,255)}.${getRandomNumRange(0,255)}`
+        const response = await fetch(`https://www.bing.com/images/create/`, {
+            method: 'GET',
+            headers: {
+                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "accept-language": "en-US,en;q=0.9",
+                "cache-control": "max-age=0",
+                "content-type": "application/x-www-form-urlencoded",
+                "origin": "https://www.bing.com",
+                "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.63",
+                "x-forwarded-for": FORWARDED_IP,
+                // TE: 'trailers',
+                // Priority: 'u=4',
+                // Pragma: 'no-cache',
+                // 'Cache-Control': 'no-cache',
+                Referer: initReferrer,
+                cookie: `_U=${cookie}`,
+                // cookie: `_U=${cookie};SRCHHPGUSR=${cookie2}`,
+            },
+        })
 
-        const response = await session.get(`https://www.bing.com/images/create`)
+        // console.log("response")
+        // console.log(response)
 
-        // const FORWARDED_IP = `13.${getRandomNumRange(104,107)}.${getRandomNumRange(0,255)}.${getRandomNumRange(0,255)}`
-        // const response = await fetch(`https://www.bing.com/images/create?`, {
-        //     method: 'GET',
-        //     headers: {
-        //         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        //         "Sec-Fetch-Dest": "document",
-        //         "Sec-Fetch-Mode": "navigate",
-        //         "Sec-Fetch-Site": "same-origin",
-        //         "Sec-Fetch-User": "?1",
-        //         "Host": "www.bing.com",
-        //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0",
-        //         "Accept-Language": "en-US,en;q=0.5",
-        //         "Accept-Encoding": "gzip, deflate, br",
-        //         "Origin": "https://www.bing.com",
-        //         "DNT": "1",
-        //         "Content-Length": "15",
-        //         "Content-Type": "application/x-www-form-urlencoded",
-        //         "Connection": "keep-alive",
-        //         "Upgrade-Insecure-Requests": "1",
-        //         "TE": "trailers",
-        //         "Priority": "u=1",
-        //         Referer: initReferrer,
-        //         cookie: `_U=${cookie}`,
-        //     },
-        // })
+        const responseText = await response.text()
 
-        console.log("response")
-        console.log(response)
-
-        const responseText = response.data
-
-        console.log("TEXT")
-        console.log(responseText)
+        // console.log("TEXT38")
+        // console.log(responseText)
 
         const regex = /data-tb="([0-9]*)"/
         const matches = responseText.match(regex)
+
+        // console.log(matches)
+        // console.log(matches ? matches[1] : -1)
 
         return matches ? parseInt(matches[1]) : -1
     }
@@ -421,8 +397,8 @@ export class Dalle {
 
     /**
      * Check validity of new cookie and registers it.
-     * @param cookie _U cookie
-     */
+     * @param cookie  _U cookie
+     * */
     async validateAndRegisterCookie(cookie: string) {
 
         const tokenCount = await this.checkCookie(cookie)
@@ -433,7 +409,7 @@ export class Dalle {
             newCookie.tokens = tokenCount
             newCookie.id = cookie
             try {
-                await this.cookieRepo.persistAndFlush(newCookie)
+                await this.cookieRepo.getEntityManager().persistAndFlush(newCookie)
             } catch (error) {
                 return ('Error! Duplicate ?')
             }
@@ -450,7 +426,7 @@ export class Dalle {
         let gen = new Generation()
         gen.prompt = prompt
         gen.generations = urls
-        await this.generationRepo.persistAndFlush(gen)
+        await this.generationRepo.getEntityManager().persistAndFlush(gen)
     }
 
     /**
@@ -465,7 +441,7 @@ export class Dalle {
         if (!user)
             return 'Error'
         user.usedTokens = user.usedTokens + tokenNumber
-        await userRepo.persistAndFlush(user)
+        await userRepo.getEntityManager().persistAndFlush(user)
     }
 
     /**
@@ -480,6 +456,6 @@ export class Dalle {
         if (!user)
             return 'Error'
         user.contributedCookies = user.contributedCookies + 1
-        await userRepo.persistAndFlush(user)
+        await userRepo.getEntityManager().persistAndFlush(user)
     }
 }

@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 
-import {EntityName, MikroORM, Options, Platform, TextType, Type} from '@mikro-orm/core'
+import { EntityName, MikroORM, Options } from '@mikro-orm/core'
 import fastFolderSizeSync from 'fast-folder-size/sync'
 import { backup, restore } from 'saveqlite'
 import { delay, inject } from 'tsyringe'
@@ -26,7 +26,7 @@ export class Database {
 		const pluginsManager = await resolveDependency(PluginsManager)
 
 		// get config
-		const config = mikroORMConfig[env.NODE_ENV || 'development'] as Options<DatabaseDriver>
+		const config = mikroORMConfig[env.NODE_ENV || 'development'] as unknown as Options<DatabaseDriver>
 
 		// defines entities into the config
 		config.entities = [...Object.values(entities), ...pluginsManager.getEntities()]
@@ -186,11 +186,9 @@ export class Database {
 	}
 
 	isSQLiteDatabase(): boolean {
-		const type = mikroORMConfig[env.NODE_ENV]!.type
+		const config = mikroORMConfig[env.NODE_ENV]
 
-		if (type)
-			return ['sqlite', 'better-sqlite'].includes(type)
-		else return false
+		return !!config.dbName && !config.port
 	}
 
 }

@@ -15,15 +15,6 @@ const fr = {
 		NO_COMMAND_DESCRIPTION: 'Aucune description fournie.',
 	},
 	COMMANDS: {
-		DALLE: {
-			DESCRIPTION: 'Generate pictures with your prompt, run n generations (4 pics)',
-		},
-		TOKENS: {
-			DESCRIPTION: 'How many generation tokens are still available for today',
-		},
-		ADD_COOKIE: {
-			DESCRIPTION: 'Give a bing creator account cookie to the bot, allowing it to generate 15 more daily pictures!',
-		},
 		INVITE: {
 			DESCRIPTION: 'Invitez le bot sur votre serveur!',
 			EMBED: {

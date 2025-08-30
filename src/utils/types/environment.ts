@@ -6,7 +6,7 @@ import { apiConfig, generalConfig, mikroORMConfig } from '@/configs'
 
 export const env = cleanEnv(process.env, {
 	NODE_ENV: str({ choices: ['development', 'production'], default: 'development' }),
-	
+
 	BOT_TOKEN: str(),
 	TEST_GUILD_ID: str(),
 	BOT_OWNER_ID: str(),
@@ -24,7 +24,10 @@ export const env = cleanEnv(process.env, {
 })
 
 export function checkEnvironmentVariables() {
-	if (!['sqlite', 'better-sqlite'].includes(mikroORMConfig[env.NODE_ENV].type)) {
+	const config = mikroORMConfig[env.NODE_ENV]
+
+	const isSqliteDatabase = !!config.dbName && !config.port
+	if (!isSqliteDatabase) {
 		cleanEnv(process.env, {
 			DATABASE_HOST: str(),
 			DATABASE_PORT: num(),

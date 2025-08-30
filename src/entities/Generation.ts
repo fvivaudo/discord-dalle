@@ -8,7 +8,7 @@ import {User} from "discord.js";
 // ================= Entity ==================
 // ===========================================
 
-@Entity({ customRepository: () => GenerationRepository })
+@Entity({ repository: () => GenerationRepository })
 export class Generation extends CustomBaseEntity {
 
     [EntityRepositoryType]?: GenerationRepository
